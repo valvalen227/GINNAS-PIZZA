@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GINNA'S PIZZA - La pizza que siempre te antoja</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/poppins@5.0.8/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.8/index.css">
+    <link rel="icon" type="image/webp" href="assets/img/logo-ginnas-pizza.webp">
+    <meta name="theme-color" content="#000000">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="vistaCliente" class="vista activa">
+    <header class="header-publico">
+        <div class="logo-publico">
+            <img class="logo-img" src="assets/img/logo-ginnas-pizza.webp" alt="Ginna's Pizza" width="85" height="55">
+        </div>
+        <div class="header-acciones" id="accionesSesionCliente">
+            <button class="btn btn-registro" onclick="abrirLoginCliente()">👤 Iniciar sesión</button>
+            <button class="btn btn-secondary" onclick="abrirRegistroCliente()">Registrarme</button>
+        </div>
+    </header>
+
+    <section class="hero-publico">
+        <div class="hero-contenido">
+            <div>
+                <h2 class="hero-titulo">
+                    La mejor pizza<br/>
+                    <span>hecha con amor</span> 🍕
+                </h2>
+                <p class="hero-descripcion">
+                    Ingredientes frescos, masa artesanal y el sabor inconfundible de GINNA'S PIZZA.
+                    Ordena ahora y disfruta en minutos.
+                </p>
+                <div class="hero-stats">
+                    <div>
+                        <div class="hero-stat-numero">30min</div>
+                        <div class="hero-stat-texto">Entrega rápida</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-numero">4.9★</div>
+                        <div class="hero-stat-texto">Calificación</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-numero">+5K</div>
+                        <div class="hero-stat-texto">Clientes felices</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-pizza"><img src="assets/img/logo-ginnas-pizza.webp" alt="Ginna's Pizza"></div>
+        </div>
+    </section>
+
+    <div class="layout-cliente">
+        <section>
+            <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 16px;">
+                Nuestro Menú
+            </h2>
+            <p class="nota-tamano-menu">El precio de cada pizza cambia según el tamaño que elijas: Personal, Mediana o Familiar.</p>
+            <div id="catalogoDisponibilidadAviso" class="catalogo-aviso" role="status" aria-live="polite" hidden></div>
+            <section id="promocionesPublicas" class="ofertas-exclusivas" aria-labelledby="promocionesPublicasTitulo" hidden>
+                <div class="ofertas-cabecera">
+                    <div>
+                        <span class="ofertas-etiqueta">PROMOCIONES</span>
+                        <h3 id="promocionesPublicasTitulo">Combos y promociones</h3>
+                        <p>Promociones disponibles para todos.</p>
+                    </div>
+                </div>
+                <div id="promocionesPublicasGrid" class="ofertas-grid"></div>
+            </section>
+            <section id="ofertasExclusivas" class="ofertas-exclusivas" aria-labelledby="ofertasTitulo" hidden>
+                <div class="ofertas-cabecera"><div><span class="ofertas-etiqueta">BENEFICIO DE TU CUENTA</span><h3 id="ofertasTitulo">Ofertas exclusivas para clientes registrados</h3><p id="mensajeOfertasExclusivas" hidden>Inicia sesión para descubrir nuestras ofertas especiales.</p></div></div>
+                <div id="ofertasGrid" class="ofertas-grid"></div>
+            </section>
+
+            <div class="categorias-barra">
+                <button class="categoria-btn activa" data-categoria="todas" onclick="filtrarCategoria('todas', this)">
+                    🍽️ Todos
+                </button>
+                <button class="categoria-btn" data-categoria="Pizzas" onclick="filtrarCategoria('Pizzas', this)">
+                    🍕 Pizzas
+                </button>
+                <button class="categoria-btn" data-categoria="Bebidas" onclick="filtrarCategoria('Bebidas', this)">
+                    🥤 Bebidas
+                </button>
+                <button class="categoria-btn" data-categoria="Adiciones" onclick="filtrarCategoria('Adiciones', this)">
+                    🧀 Adiciones
+                </button>
+            </div>
+
+            <div class="productos-grid" id="productosGrid"></div>
+        </section>
+
+        <aside class="panel-pedido">
+            <div class="panel-pedido-header">
+                <h3>🛒 Tu pedido <span class="contador-items" id="contadorItems">0</span></h3>
+            </div>
+
+            <div class="panel-pedido-body scrollbar-thin" id="panelPedidoBody">
+                <div class="pedido-vacio" id="pedidoVacio">
+                    <div class="pedido-vacio-icono">🛒</div>
+                    <p style="font-weight: 600; margin-bottom: 4px;">Tu pedido está vacío</p>
+                    <p style="font-size: 12px;">Agrega productos del menú</p>
+                </div>
+                <div id="pedidoItems"></div>
+            </div>
+
+            <div class="panel-pedido-footer" id="panelPedidoFooter" style="display: none;">
+                <div class="resumen-linea">
+                    <span>Subtotal</span>
+                    <span id="resumenSubtotal">$0</span>
+                </div>
+                <div class="resumen-linea">
+                    <span>Descuentos exclusivos</span>
+                    <span id="resumenDescuento">− $0</span>
+                </div>
+                <div class="resumen-linea">
+                    <span>IVA (16%)</span>
+                    <span id="resumenIva">$0</span>
+                </div>
+                <div class="resumen-total">
+                    <span>Total</span>
+                    <span id="resumenTotal">$0</span>
+                </div>
+                <label class="tipo-pedido-cliente">Entrega
+                    <select id="tipoPedidoCliente" class="form-input" onchange="actualizarFormularioDomicilio()">
+                        <option value="Domicilio">Domicilio</option>
+                        <option value="Recoger">Recoger en tienda</option>
+                    </select>
+                </label>
+                <section id="formularioDomicilioCliente" class="formulario-domicilio-cliente" hidden aria-labelledby="tituloFormularioDomicilio">
+                    <h4 id="tituloFormularioDomicilio">Datos para la entrega</h4>
+                    <p class="formulario-domicilio-ayuda">Completa los datos de quien recibe. El pago se registrará por separado; elegir un medio no confirma el pago.</p>
+                    <div class="formulario-domicilio-grid">
+                        <label class="form-grupo">Nombre de quien recibe
+                            <input id="domicilioNombre" class="form-input" type="text" maxlength="120" autocomplete="name">
+                        </label>
+                        <label class="form-grupo">Teléfono de contacto
+                            <input id="domicilioTelefono" class="form-input" type="tel" maxlength="25" autocomplete="tel" inputmode="tel" placeholder="Ej. 3001234567">
+                        </label>
+                        <label class="form-grupo domicilio-campo-ancho">Dirección completa
+                            <input id="domicilioDireccion" class="form-input" type="text" maxlength="180" autocomplete="street-address" placeholder="Calle, carrera, número y apartamento">
+                        </label>
+                        <label class="form-grupo">Barrio
+                            <input id="domicilioBarrio" class="form-input" type="text" maxlength="100" autocomplete="address-level3" required>
+                        </label>
+                        <label class="form-grupo">Indicaciones adicionales
+                            <input id="domicilioIndicaciones" class="form-input" type="text" maxlength="240" placeholder="Color de la casa, referencia, portería...">
+                        </label>
+                        <label class="form-grupo">Medio de pago
+                            <select id="domicilioMedioPago" class="form-input">
+                                <option value="">Selecciona un medio</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                            </select>
+                        </label>
+                        <label class="form-grupo domicilio-campo-ancho">Observaciones del pedido
+                            <textarea id="domicilioObservaciones" class="form-input" rows="2" maxlength="300" placeholder="Indicaciones para preparar o entregar el pedido"></textarea>
+                        </label>
+                    </div>
+                    <p id="errorFormularioDomicilio" class="login-error" role="alert" aria-live="polite" hidden></p>
+                </section>
+                <div class="panel-pedido-acciones">
+                    <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="finalizarPedido()">
+                        Enviar pedido 🚀
+                    </button>
+                    <button class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 8px;" onclick="vaciarPedido()">
+                        Vaciar pedido
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <footer class="footer-publico">
+        <div class="footer-contenido">
+            <div class="footer-col">
+                <img class="logo-img footer-logo" src="assets/img/logo-ginnas-pizza.webp" alt="Ginna's Pizza" loading="lazy">
+                <p>La pizza que siempre te antoja. Calidad, sabor y tradición en cada rebanada desde 2015.</p>
+                <p style="margin-top: 12px;">📍 El jardin</p>
+                <p>✉️ hola@ginnaspizza.com</p>
+            </div>
+            <div class="footer-col">
+                <h4>Horarios</h4>
+                <p>Lun - Jue: 4:00 - 11:00</p>
+                <p>Vie - Sáb: 4:00 - 11:30</p>
+                <p>Domingo: 4:00 - 11:00</p>
+            </div>
+            <div class="footer-col">
+                <button class="footer-acceso-admin" onclick="mostrarLogin()">
+                    🔐 Acceso al sistema
+                </button>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 GINNA'S PIZZA · Todos los derechos reservados · 
+        </div>
+    </footer>
+</div>
+
+<div id="vistaLogin" class="vista">
+    <div class="login-contenedor">
+        <div class="login-tarjeta">
+            <div class="login-lateral">
+                <div class="login-marca">
+                    <img class="logo-img logo-mini" src="assets/img/logo-ginnas-pizza.webp" alt="Ginna's Pizza">
+                    <div class="login-marca-texto">
+                        <h1>GINNA'S PIZZA</h1>
+                        <p>Sistema Interno</p>
+                    </div>
+                </div>
+                <div class="login-bienvenida">
+                    <h2>¡Bienvenido a <span>GINNA'S PIZZA!</span></h2>
+                    <p>Gestiona tus pedidos y disfruta de una mejor experiencia.</p>
+                </div>
+            </div>
+
+            <div class="login-formulario">
+                <h3>Iniciar sesión</h3>
+                <p class="subtitulo">¡Bienvenido a GINNA'S PIZZA!</p>
+                <p class="login-mensaje">Gestiona tus pedidos y disfruta de una mejor experiencia.</p>
+                <p class="subtitulo">Accede con tus credenciales</p>
+
+                <div class="login-error" id="loginError">
+                    ❌ Credenciales incorrectas. Intenta de nuevo.
+                </div>
+                
+
+
+                <form onsubmit="iniciarSesion(event)">
+                    <div class="form-grupo">
+                        <label for="loginEmail">Correo o usuario</label>
+                        <input type="text" id="loginEmail" class="form-input" placeholder="admin@ginnaspizza.com o admin" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+                    </div>
+                    <div class="form-grupo">
+                        <label>Contraseña</label>
+                        <div class="password-control">
+                            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
+                            <button type="button" class="password-toggle" onclick="alternarVisibilidadPassword('loginPassword', this)" aria-label="Mostrar contraseña">Mostrar</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 8px;">
+                        Ingresar al sistema
+                    </button>
+                </form>
+
+                <button class="btn-volver-publico" onclick="volverAPublico()">
+                    ← Volver a la tienda
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="vistaAdmin" class="vista">
+    <div class="admin-layout">
+        <div id="sidebarFondo" class="sidebar-fondo" onclick="cerrarMenuLateral()" aria-hidden="true"></div>
+        <aside class="sidebar" id="sidebarAdmin" aria-label="Navegación principal">
+            <div class="sidebar-header">
+                <img class="logo-img" src="assets/img/logo-ginnas-pizza.webp" alt="Ginna's Pizza" width="68" height="44">
+                <div>
+                    <div class="sidebar-titulo">GINNA'S PIZZA</div>
+                    <div class="sidebar-subtitulo">Panel administrativo</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav scrollbar-thin">
+                <div class="sidebar-seccion">Principal</div>
+                <button class="nav-item activo" data-modulo="dashboard" onclick="cambiarModulo('dashboard', this)">
+                    <span class="nav-item-icono">📊</span> Dashboard
+                </button>
+
+                <div class="sidebar-seccion">Módulos TPS</div>
+                <button class="nav-item" data-modulo="ventas" onclick="cambiarModulo('ventas', this)">
+                    <span class="nav-item-icono">💰</span> Ventas
+                </button>
+                <button class="nav-item" data-modulo="pedidos" onclick="cambiarModulo('pedidos', this)">
+                    <span class="nav-item-icono">📦</span> Pedidos
+                </button>
+                <button class="nav-item" data-modulo="inventario" onclick="cambiarModulo('inventario', this)">
+                    <span class="nav-item-icono">📋</span> Inventario
+                </button>
+                <button class="nav-item" data-modulo="productos" onclick="cambiarModulo('productos', this)">
+                    <span class="nav-item-icono">🍕</span> Productos
+                </button>
+                <button class="nav-item" data-modulo="promociones" onclick="cambiarModulo('promociones', this)">
+                    <span class="nav-item-icono">🎁</span> Combos y promociones
+                </button>
+                <button class="nav-item" data-modulo="clientes" onclick="cambiarModulo('clientes', this)">
+                    <span class="nav-item-icono">👥</span> Clientes
+                </button>
+                <button class="nav-item" data-modulo="proveedores" onclick="cambiarModulo('proveedores', this)">
+                    <span class="nav-item-icono">🚚</span> Proveedores
+                </button>
+                <button class="nav-item" data-modulo="usuarios" onclick="cambiarModulo('usuarios', this)">
+                    <span class="nav-item-icono">🔐</span> Usuarios
+                </button>
+
+                <div class="sidebar-seccion">Módulo MIS</div>
+                <button class="nav-item" data-modulo="reportes" onclick="cambiarModulo('reportes', this)">
+                    <span class="nav-item-icono">📈</span> Reportes
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-cerrar-sesion" onclick="cerrarSesion()">
+                    🚪 Cerrar sesión
+                </button>
+            </div>
+        </aside>
+
+        <div class="admin-contenido">
+            <header class="admin-header">
+                <button type="button" id="btnMenuLateral" class="btn-menu-lateral" onclick="alternarMenuLateral()" aria-label="Abrir menú de navegación" aria-controls="sidebarAdmin" aria-expanded="false">☰</button>
+                <div class="admin-header-info">
+                    <h2 id="adminTitulo">Dashboard</h2>
+                    <p id="adminSubtitulo">Resumen general del negocio</p>
+                </div>
+                <div class="admin-header-usuario">
+                    <div class="admin-usuario-info">
+                        <div class="admin-usuario-nombre" id="adminNombre"></div>
+                        <div class="admin-usuario-rol" id="adminRol"></div>
+                    </div>
+                    <div class="admin-avatar" id="adminAvatar"></div>
+                    <button class="btn-cerrar-sesion-header" onclick="cerrarSesion()">Cerrar sesión</button>
+                </div>
+            </header>
+
+            <main class="admin-main">
+                <section id="modulo-dashboard" class="modulo-admin activo">
+                    <div id="dashboardCajera" class="dashboard-operativo" data-dashboard-rol="Cajero" hidden>
+                        
+                        <div class="dashboard-grid">
+                            <div class="stat-card"><div class="stat-card-titulo">Ventas pagadas hoy</div><div class="stat-card-valor" id="cajeraVentasHoy">$0</div></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Pedidos pendientes de cobro</div><div class="stat-card-valor" id="cajeraPendientesCobro">0</div></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Pedidos por atender o entregar</div><div class="stat-card-valor" id="cajeraPedidosAbiertos">0</div></div>
+                        </div>
+                        <div class="dashboard-principal">
+                            <section class="chart-contenedor">
+                                <div class="chart-header"><div><h3>Medios de pago</h3><p>Según pagos registrados</p></div></div>
+                                <div id="cajeraMediosPago" class="operativo-resumen"></div>
+                            </section>
+                            <section class="chart-contenedor">
+                                <div class="chart-header"><div><h3>Disponibilidad</h3><p>Productos y existencias agotadas</p></div></div>
+                                <div id="cajeraDisponibilidad" class="operativo-resumen"></div>
+                            </section>
+                        </div>
+                    </div>
+                    <div id="dashboardMesera" class="dashboard-operativo" data-dashboard-rol="Mesera" hidden>
+                        
+                        <div class="dashboard-grid">
+                            <div class="stat-card"><div class="stat-card-titulo">Pendientes de confirmar</div><div class="stat-card-valor" id="meseraPedidosPendientes">0</div></div>
+                            <div class="stat-card"><div class="stat-card-titulo">En preparación</div><div class="stat-card-valor" id="meseraPedidosPreparacion">0</div></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Listos para entregar</div><div class="stat-card-valor" id="meseraPedidosListos">0</div></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Mesas activas</div><div class="stat-card-valor" id="meseraMesasActivas">0</div></div>
+                        </div>
+                        <section class="chart-contenedor mesas-activas-panel">
+                            <div class="chart-header"><div><h3>Estado de las mesas</h3><p>Las mesas se liberan al entregar el pedido y registrar el pago.</p></div></div>
+                            
+                            <div id="meseraMesasGrid" class="mesas-activas-grid" aria-live="polite"></div>
+                        </section>
+                        <section class="chart-contenedor">
+                            <div class="chart-header"><div><h3>Productos agotados</h3><p>Disponibilidad temporal de inventario</p></div></div>
+                            <div id="meseraDisponibilidad" class="operativo-resumen"></div>
+                        </section>
+                    </div>
+                    <div id="dashboardAdminContenido" data-dashboard-admin>
+                    
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div class="stat-card-icono" style="background: var(--brand-100); color: var(--brand-600);">💵</div>
+                            </div>
+                            <div class="stat-card-titulo">Ventas del día</div>
+                            <div class="stat-card-valor" id="dashboardVentasHoy">$0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div class="stat-card-icono" style="background: #FFDAD8; color: #8A110E;">📦</div>
+                            </div>
+                            <div class="stat-card-titulo">Ventas completadas</div>
+                            <div class="stat-card-valor" id="dashboardCantidadVentas">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div class="stat-card-icono" style="background: #FFDAD8; color: #8A110E;">🍕</div>
+                            </div>
+                            <div class="stat-card-titulo">Pedidos pendientes / preparación</div>
+                            <div class="stat-card-valor" id="dashboardPedidosActivos">0 / 0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <div class="stat-card-icono" style="background: #FFECB3; color: #0A0A0A;">⚠️</div>
+                            </div>
+                            <div class="stat-card-titulo">Inventario bajo</div>
+                            <div class="stat-card-valor" id="dashboardInventarioBajo">0</div>
+                        </div>
+                        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icono" style="background: #0A0A0A; color: #FBC02D;">👥</div></div><div class="stat-card-titulo">Clientes registrados</div><div class="stat-card-valor" id="dashboardClientes">0</div></div>
+                    </div>
+
+                    <div class="dashboard-principal">
+                        <div class="chart-contenedor">
+                            <div class="chart-header">
+                                <div>
+                                    <h3>Ventas de la semana</h3>
+                                    <p>Últimos 7 días</p>
+                                </div>
+                                <select class="form-input" id="dashboardPeriodoVentas" style="width: auto; padding: 6px 12px;">
+                                    <option value="7">Últimos 7 días</option>
+                                    <option value="30">Últimos 30 días</option>
+                                </select>
+                            </div>
+                            <div class="chart-area">
+                                <p id="dashboardVentasVacio" class="estado-vacio-grafico" hidden>Aún no hay ventas registradas en este periodo.</p>
+                                <canvas id="chartVentasSemana"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-contenedor">
+                            <div class="chart-header">
+                                <div>
+                                    <h3>Productos más vendidos</h3>
+                                    <p>Unidades en ventas completadas</p>
+                                </div>
+                            </div>
+                            <div id="dashboardProductosMasVendidos"></div>
+                        </div>
+                    </div>
+
+                    <div class="tabla-contenedor">
+                        <div class="tabla-header">
+                            <div>
+                                <h3>Pedidos del día</h3>
+                                <p style="font-size: 12px; color: var(--gray-500);">Últimos pedidos registrados</p>
+                            </div>
+                        </div>
+                        <div class="tabla-wrapper">
+                            <table class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaPedidosDashboard"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+
+                <section id="modulo-ventas" class="modulo-admin">
+                    <div class="dashboard-grid ventas-indicadores">
+                        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icono" style="background: var(--brand-100); color: var(--brand-600);">🧾</div></div><div class="stat-card-titulo">Ventas de hoy</div><div class="stat-card-valor" id="ventasCantidadHoy">0</div></div>
+                        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icono" style="background: #FFDAD8; color: #8A110E;">💵</div></div><div class="stat-card-titulo">Total vendido hoy</div><div class="stat-card-valor" id="ventasTotalHoy">$0</div></div>
+                        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icono" style="background: #0A0A0A; color: #FBC02D;">🍕</div></div><div class="stat-card-titulo">Productos vendidos</div><div class="stat-card-valor" id="ventasProductosHoy">0</div></div>
+                        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icono" style="background: #FFECB3; color: #0A0A0A;">📊</div></div><div class="stat-card-titulo">Ticket promedio</div><div class="stat-card-valor" id="ventasTicketPromedio">$0</div></div>
+                    </div>
+                    
+                    <div class="tabla-contenedor ventas-historial">
+                        <div class="tabla-header">
+                            <div><h3>Historial de ventas</h3><p>Ventas completadas desde pedidos entregados</p></div>
+                            <div class="filtros-comerciales">
+                                <input class="form-input" type="date" id="filtroVentasFecha" aria-label="Filtrar ventas por fecha">
+                                <input class="form-input" type="search" id="filtroVentasCliente" placeholder="Buscar código o cliente">
+                                <select class="form-input" id="filtroVentasEstado" aria-label="Filtrar ventas por estado"><option value="">Todos los estados</option><option value="Completada">Completada</option></select>
+                            </div>
+                        </div>
+                        <div class="tabla-wrapper"><table class="tabla tabla-comercial"><thead><tr><th>Venta</th><th>Fecha y hora</th><th>Cliente</th><th>Productos</th><th>Cantidad</th><th>Total</th><th>Pago</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="tablaVentas"></tbody></table></div>
+                    </div>
+                    <div class="tabla-contenedor">
+                        <div class="tabla-header"><div><h3>Pedidos pendientes de cobro</h3><p>Selecciona un pedido para registrar el pago una sola vez</p></div></div>
+                        <div class="tabla-wrapper"><table class="tabla"><thead><tr><th>Pedido</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="tablaPedidosCobro"></tbody></table></div>
+                    </div>
+                </section>
+
+                <section id="modulo-pedidos" class="modulo-admin">
+                    <div class="modulo-titulo">
+                        <div>
+                            <h3>Gestión de Pedidos</h3>
+                            <p id="pedidosModuloSubtitulo">Prepara y entrega pedidos; la venta se genera al completar la entrega</p>
+                        </div>
+                        <div class="modulo-titulo-acciones">
+                            <button class="btn btn-secondary" onclick="actualizarPanelManual(this)" title="Volver a consultar la base de datos">↻ Actualizar</button>
+                            <button class="btn btn-primary" onclick="abrirModalPedido()">+ Añadir pedido</button>
+                        </div>
+                    </div>
+                    <div class="filtros-comerciales filtros-pedidos">
+                        <input class="form-input" type="date" id="filtroPedidosFecha" aria-label="Filtrar pedidos por fecha">
+                        <input class="form-input" type="search" id="filtroPedidosCliente" placeholder="Buscar código o cliente">
+                        <select class="form-input" id="filtroPedidosEstado" aria-label="Filtrar pedidos por estado"><option value="">Todos los estados</option><option>Pendiente</option><option>Confirmado</option><option>En preparación</option><option>Listo para entregar</option><option>Entregado</option><option>Cancelado</option></select>
+                        <button type="button" class="btn btn-primary btn-sm btn-buscar-filtros" id="btnBuscarPedidos">Buscar</button>
+                    </div>
+                    <div class="tabla-contenedor">
+                        <div class="tabla-wrapper">
+                            <table class="tabla tabla-pedidos">
+                                <colgroup>
+                                    <col style="width: 8%"><col style="width: 11%"><col style="width: 11%"><col style="width: 20%"><col style="width: 9%"><col style="width: 8%"><col style="width: 10%"><col style="width: 10%"><col style="width: 13%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th># Pedido</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Productos</th>
+                                        <th>Total</th>
+                                        <th>Tipo</th>
+                                        <th>Estado</th>
+                                        <th>Pago</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaPedidos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="modulo-inventario" class="modulo-admin">
+                    <div class="modulo-titulo">
+                        <div>
+                            <h3>Control de Inventario</h3>
+                            <p>Ingredientes, recetas y movimientos del inventario</p>
+                        </div>
+                        <div class="modulo-titulo-acciones">
+                            <button class="btn btn-primary" onclick="abrirFormularioIngrediente()">+ Nuevo ingrediente</button>
+                        </div>
+                    </div>
+                    
+                    <div class="inventario-alertas" id="inventarioAlertas" aria-live="polite"></div>
+                    <div class="tabla-contenedor">
+                        <div class="tabla-header">
+                            <div>
+                                <h3>Existencias de ingredientes y productos</h3>
+                                <p style="font-size: 12px; color: var(--gray-500);">El estado se calcula comparando cantidad disponible con stock mínimo</p>
+                            </div>
+                        </div>
+                        <div class="tabla-wrapper">
+                            <table class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Producto / ingrediente</th>
+                                        <th>Categoría</th>
+                                        <th>Cantidad</th>
+                                        <th>Stock mínimo</th>
+                                        <th>Fecha actualización</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaInventario"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="inventario-grid inventario-grid-recetas">
+                        <section class="inventario-panel">
+                            <div class="inventario-panel-titulo">
+                                <div><h3>Recetas por sabor y tamaño</h3><p>Cantidad de cada ingrediente que consume una unidad. Se guarda en PostgreSQL.</p></div>
+                                <span class="badge badge-success">Guardado en base de datos</span>
+                            </div>
+                            <div class="receta-controles">
+                                <label class="form-grupo">Sabor
+                                    <select id="recetaSabor" class="form-input" onchange="renderizarEditorReceta()"></select>
+                                </label>
+                                <label class="form-grupo">Tamaño
+                                    <select id="recetaTamano" class="form-input" onchange="renderizarEditorReceta()">
+                                        <option value="Personal">Personal</option>
+                                        <option value="Mediana">Mediana</option>
+                                        <option value="Familiar">Familiar</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div id="editorReceta" class="receta-editor"></div>
+                            <button class="btn btn-primary" onclick="guardarReceta()">Guardar receta</button>
+                            <p class="ayuda-integracion">La disponibilidad del menú se calcula con estas recetas y el inventario real.</p>
+                        </section>
+                    </div>
+                    <section class="inventario-panel movimientos-panel">
+                        <div class="inventario-panel-titulo">
+                            <div><h3>Movimientos de inventario</h3><p>Entradas, salidas y ajustes (incluye los descuentos automáticos por pedidos)</p></div>
+                        </div>
+                        <form class="movimiento-form" onsubmit="registrarMovimientoManual(event)">
+                            <label class="form-grupo">Ingrediente<select id="movimientoIngrediente" class="form-input" required></select></label>
+                            <label class="form-grupo">Tipo<select id="movimientoTipo" class="form-input" onchange="actualizarEtiquetaMovimiento()"><option value="Entrada">Entrada</option><option value="Salida">Salida</option><option value="Ajuste">Ajuste (fijar existencia)</option></select></label>
+                            <label class="form-grupo"><span id="movimientoEtiquetaCantidad">Cantidad</span><input id="movimientoCantidad" class="form-input" type="number" min="0" step="0.001" required placeholder="0"></label>
+                            <button class="btn btn-secondary" type="submit">Registrar movimiento</button>
+                        </form>
+                        <div class="tabla-wrapper">
+                            <table class="tabla">
+                                <thead><tr><th>Fecha y hora</th><th>Producto / ingrediente</th><th>Movimiento</th><th>Cantidad</th><th>Motivo</th><th>Referencia</th></tr></thead>
+                                <tbody id="tablaMovimientos"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </section>
+
+                <section id="modulo-productos" class="modulo-admin">
+                    <div class="modulo-titulo">
+                        <div>
+                            <h3>Catálogo de Productos</h3>
+                            <p>Administra tu menú completo</p>
+                        </div>
+                        <div class="modulo-titulo-acciones">
+                            <button class="btn btn-primary" onclick="abrirFormularioProducto()">+ Nuevo producto</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tabla-contenedor">
+                        <div class="tabla-wrapper">
+                            <table class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Descripción</th>
+                                        <th>Precio</th>
+                                        <th>Categoría</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaProductos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="modulo-promociones" class="modulo-admin">
+                    <div class="modulo-titulo">
+                        <div><h3>Combos y promociones</h3><p>Las promociones usan productos existentes; no crean productos ni modifican existencias.</p></div>
+                        <div class="modulo-titulo-acciones"><button class="btn btn-primary" onclick="mostrarFormularioPromocion()">+ Nueva promoción</button></div>
+                    </div>
+                    
+                    <section id="formularioPromocion" class="card formulario-promocion" hidden>
+                        <div class="inventario-panel-titulo"><div><h3 id="tituloFormularioPromocion">Nueva promoción</h3><p>El precio normal se calcula desde el catálogo y el tamaño seleccionado.</p></div><button type="button" class="modal-cerrar" onclick="ocultarFormularioPromocion()" aria-label="Cerrar formulario">✕</button></div>
+                        <form class="formulario-promocion-grid" onsubmit="guardarPromocion(event)">
+                            <input id="promocionId" type="hidden">
+                            <label class="form-grupo">Nombre<input id="promocionNombre" class="form-input" required maxlength="80"></label>
+                            <label class="form-grupo">Descripción<input id="promocionDescripcion" class="form-input" required maxlength="180"></label>
+                            <label class="form-grupo">Público<select id="promocionPublico" class="form-input"><option value="general">General</option><option value="clientes">Exclusiva para clientes registrados</option></select></label>
+                            <label class="form-grupo">Tipo de descuento<select id="promocionTipoDescuento" class="form-input" onchange="actualizarEtiquetaDescuento(); actualizarVistaPreviaPromocion()"><option value="precio">Precio especial</option><option value="descuento-fijo">Descuento fijo</option><option value="porcentaje">Porcentaje de descuento</option></select></label>
+                            <label class="form-grupo"><span id="promocionEtiquetaDescuento">Precio especial</span><input id="promocionDescuento" class="form-input" type="number" min="0" step="0.01" required oninput="actualizarVistaPreviaPromocion()"></label>
+                            <label class="form-grupo">Inicia (opcional)<input id="promocionFechaInicio" class="form-input" type="date"></label>
+                            <label class="form-grupo">Finaliza (opcional)<input id="promocionFechaFin" class="form-input" type="date"></label>
+                            <fieldset class="promocion-componentes"><legend>Productos del combo</legend><div id="promocionComponentes"></div><button type="button" class="btn btn-secondary btn-sm" onclick="agregarComponentePromocion()">+ Agregar producto</button></fieldset>
+                            <div class="promocion-preview" id="promocionVistaPrevia">Completa la promoción para ver la vista previa.</div>
+                            <div id="errorPromocion" class="login-error" role="alert"></div>
+                            <div class="formulario-promocion-acciones"><button type="button" class="btn btn-secondary" onclick="ocultarFormularioPromocion()">Cancelar</button><button type="submit" class="btn btn-primary">Guardar promoción</button></div>
+                        </form>
+                    </section>
+                    <div class="tabla-contenedor"><div class="tabla-wrapper"><table class="tabla"><thead><tr><th>Promoción</th><th>Productos</th><th>Precio normal</th><th>Precio especial</th><th>Público</th><th>Vigencia</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaPromociones"></tbody></table></div></div>
+                </section>
+
+                <section id="modulo-clientes" class="modulo-admin">
+                    <div class="modulo-titulo">
+                        <div>
+                            <h3>Clientes</h3>
+                            <p>Registro y consulta de clientes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tabla-contenedor">
+                        <div class="tabla-wrapper">
+                            <table class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Identificación</th>
+                                        <th>Teléfono</th>
+                                        <th>Dirección</th>
+                                        <th>Correo</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaClientes"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="modulo-proveedores" class="modulo-admin">
+                    <div class="modulo-titulo">
+                        <div>
+                            <h3>Proveedores</h3>
+                            <p>Información de proveedores</p>
+                        </div>
+                        <div class="modulo-titulo-acciones">
+                            <button class="btn btn-primary" onclick="abrirFormularioProveedor()">+ Nuevo proveedor</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tabla-contenedor">
+                        <div class="tabla-wrapper">
+                            <table class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Teléfono</th>
+                                        <th>Correo</th>
+                                        <th>Productos suministrados</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaProveedores"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="modulo-usuarios" class="modulo-admin">
+                    <div class="modulo-titulo">
+                        <div>
+                            <h3>Gestión de Usuarios</h3>
+                            <p>Cuentas internas y roles, guardados en PostgreSQL</p>
+                        </div>
+                        <div class="modulo-titulo-acciones">
+                            <button class="btn btn-primary" onclick="mostrarFormularioUsuario()">+ Nuevo usuario</button>
+                        </div>
+                    </div>
+                    
+                    <section id="formularioUsuarioInterno" class="card formulario-usuario-interno" hidden>
+                        <div class="inventario-panel-titulo">
+                            <div><h3>Crear cuenta interna</h3><p>Solo el administrador puede registrar usuarios y asignar su rol.</p></div>
+                            <button type="button" class="modal-cerrar" onclick="ocultarFormularioUsuario()" aria-label="Cerrar formulario">✕</button>
+                        </div>
+                        <div id="errorFormularioUsuario" class="login-error" role="alert"></div>
+                        <form class="formulario-usuario-grid" onsubmit="crearUsuarioInterno(event)">
+                            <label class="form-grupo">Nombre<input id="nuevoUsuarioNombre" class="form-input" type="text" autocomplete="name" required></label>
+                            <label class="form-grupo">Correo electrónico<input id="nuevoUsuarioCorreo" class="form-input" type="email" autocomplete="email" required></label>
+                            <label class="form-grupo">Contraseña<div class="password-control"><input id="nuevoUsuarioPassword" class="form-input" type="password" minlength="8" autocomplete="new-password" required><button type="button" class="password-toggle" onclick="alternarVisibilidadPassword('nuevoUsuarioPassword', this)" aria-label="Mostrar contraseña">Mostrar</button></div></label>
+                            <label class="form-grupo">Rol<select id="nuevoUsuarioRol" class="form-input" required><option value="Cajero">Personal de caja</option><option value="Mesera">Personal de mesas</option><option value="Administrador">Administrador</option></select></label>
+                            <div class="formulario-usuario-acciones">
+                                <button type="button" class="btn btn-secondary" onclick="ocultarFormularioUsuario()">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Crear cuenta</button>
+                            </div>
+                        </form>
+                    </section>
+                    <div class="tabla-contenedor">
+                        <div class="tabla-wrapper">
+                            <table class="tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaUsuarios"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="modulo-reportes" class="modulo-admin">
+                    <div class="modulo-titulo"><div><h3>Reportes</h3><p>Resultados derivados de ventas completadas, inventario y clientes disponibles.</p></div></div>
+                    <section class="reporte-panel">
+                        <div class="reporte-cabecera">
+                            <div><h3>Período de análisis</h3><p>Todos los indicadores y gráficos usan el mismo período.</p></div>
+                        </div>
+                        <div class="reporte-filtros">
+                            <label class="form-grupo">Consultar<select id="reportePeriodoGlobal" class="form-input"><option value="hoy">Hoy</option><option value="semana">Últimos 7 días</option><option value="30dias">Últimos 30 días</option><option value="mes" selected>Este mes</option><option value="mesAnterior">Mes anterior</option><option value="rango">Rango personalizado</option></select></label>
+                            <label class="form-grupo">Desde<input id="reporteGlobalDesde" class="form-input" type="date" disabled></label>
+                            <label class="form-grupo">Hasta<input id="reporteGlobalHasta" class="form-input" type="date" disabled></label>
+                        </div>
+                        <p id="reporteConexionEstado" class="reporte-nota">Consultando información de PostgreSQL...</p>
+                    </section>
+                    <section class="reporte-panel reporte-resumen-ejecutivo" aria-labelledby="tituloResumenEjecutivo">
+                        <div class="reporte-cabecera">
+                            <div><h3 id="tituloResumenEjecutivo">Resumen ejecutivo</h3><p id="reportePeriodoAnalisis">Indicadores clave para la toma de decisiones.</p></div>
+                        </div>
+                        <div class="dashboard-grid reporte-kpis">
+                            <div class="stat-card reporte-insight"><div class="stat-card-titulo">Total ventas pagadas</div><div class="stat-card-valor reporte-insight-valor" id="reporteIndicadorTotalVentas">$0</div><p class="reporte-nota">No incluye cancelados ni pendientes de pago.</p></div>
+                            <div class="stat-card reporte-insight"><div class="stat-card-titulo">Pedidos realizados</div><div class="stat-card-valor reporte-insight-valor" id="reporteIndicadorPedidos">0</div><p class="reporte-nota">Pedidos no cancelados.</p></div>
+                            <div class="stat-card reporte-insight"><div class="stat-card-titulo">Pedidos completados</div><div class="stat-card-valor reporte-insight-valor" id="reporteIndicadorCompletados">0</div><p class="reporte-nota">Estado Entregado.</p></div>
+                            <div class="stat-card reporte-insight"><div class="stat-card-titulo">Variación de ventas</div><div class="stat-card-valor reporte-insight-valor" id="reporteVentasVariacion">—</div><p id="reporteVentasVariacionDetalle" class="reporte-nota">Comparando períodos equivalentes.</p></div>
+                            <div class="stat-card reporte-insight"><div class="stat-card-titulo">Cliente principal</div><div class="stat-card-valor reporte-insight-valor" id="reporteClientePrincipal">—</div><p id="reporteClientePrincipalDetalle" class="reporte-nota">Sin compras en el período.</p></div>
+                            <div class="stat-card reporte-insight"><div class="stat-card-titulo">Artículos críticos</div><div class="stat-card-valor reporte-insight-valor" id="reporteInventarioCritico">0</div><p class="reporte-nota">Agotados o por debajo del mínimo.</p></div>
+                            <div class="stat-card reporte-insight"><div class="stat-card-titulo">Ticket de venta</div><div class="stat-card-valor reporte-insight-valor" id="reporteTicketPromedio">$0</div><p class="reporte-nota">Promedio de ventas completadas.</p></div>
+                        </div>
+                        <div id="reporteRecomendaciones" class="reporte-recomendaciones" aria-live="polite"></div>
+                    </section>
+                    
+                    <section class="reporte-panel">
+                        <div class="reporte-cabecera"><div><h3>Análisis por día y horario</h3><p>Pedidos no cancelados y ventas pagadas reales.</p></div></div>
+                        <div class="reporte-analisis-grid">
+                            <div class="chart-contenedor"><div class="chart-header"><div><h4>Ventas por día</h4><p>Ingresos y pedidos de cada día de la semana</p></div></div><div class="chart-area"><canvas id="reporteDiaChart"></canvas></div><p id="reporteDiaResumen" class="reporte-nota"></p></div>
+                            <div class="chart-contenedor"><div class="chart-header"><div><h4>Actividad por hora</h4><p>Distribución real de pedidos durante el día</p></div></div><div class="chart-area"><canvas id="reporteHoraChart"></canvas></div><p id="reporteHoraResumen" class="reporte-nota"></p></div>
+                        </div>
+                    </section>
+                    <section class="reporte-panel">
+                        <div class="reporte-cabecera"><div><h3>Productos, clientes y modalidades</h3><p>Unidades vendidas e ingresos se presentan por separado.</p></div></div>
+                        <div class="dashboard-grid reporte-kpis">
+                            <div class="stat-card"><div class="stat-card-titulo">Producto destacado</div><div class="stat-card-valor reporte-insight-valor" id="reporteProductoDestacado">—</div><p id="reporteProductoDetalle" class="reporte-nota"></p></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Pizza más vendida</div><div class="stat-card-valor reporte-insight-valor" id="reportePizzaMasVendida">—</div><p id="reportePizzaDetalle" class="reporte-nota"></p></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Pizza menos vendida</div><div class="stat-card-valor reporte-insight-valor" id="reportePizzaMenosVendida">—</div><p id="reportePizzaMenosDetalle" class="reporte-nota"></p></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Cliente principal</div><div class="stat-card-valor reporte-insight-valor" id="reporteClientePrincipalApi">—</div><p id="reporteClientePrincipalApiDetalle" class="reporte-nota"></p></div>
+                            <div class="stat-card"><div class="stat-card-titulo">Modalidad principal</div><div class="stat-card-valor reporte-insight-valor" id="reporteModalidadPrincipal">—</div><p id="reporteModalidadDetalle" class="reporte-nota"></p></div>
+                        </div>
+                        <div class="tabla-wrapper"><table class="tabla"><thead><tr><th>Producto / sabor</th><th>Categoria</th><th>Tamaño</th><th>Unidades</th><th>Ingresos</th></tr></thead><tbody id="reporteProductosTabla"></tbody></table></div>
+                    </section>
+                    <section class="reporte-panel">
+                        <div class="reporte-cabecera"><div><h3>Reporte de ventas</h3><p>Ventas cobradas dentro del período de análisis seleccionado arriba.</p></div><button class="btn btn-secondary" onclick="exportarReporteCSV('ventas')">Exportar CSV</button></div>
+                        <div class="dashboard-grid reporte-kpis"><div class="stat-card"><div class="stat-card-titulo">Total vendido</div><div class="stat-card-valor" id="reporteVentasTotal">$0</div></div><div class="stat-card"><div class="stat-card-titulo">Ventas completadas</div><div class="stat-card-valor" id="reporteVentasCantidad">0</div></div><div class="stat-card"><div class="stat-card-titulo">Promedio por venta</div><div class="stat-card-valor" id="reporteVentasPromedio">$0</div></div></div>
+                        <div id="reporteProductosMasVendidos" class="reporte-resumen"></div>
+                        <div class="chart-contenedor reporte-chart"><div class="chart-header"><div><h4>Ventas durante el periodo</h4><p>Ingresos diarios de ventas completadas</p></div></div><div class="chart-area"><p id="reporteVentasGraficoVacio" class="estado-vacio-grafico" hidden>No hay datos suficientes para mostrar el gráfico.</p><canvas id="reporteVentasChart"></canvas></div></div>
+                        <div class="tabla-wrapper"><table class="tabla"><thead><tr><th>Código</th><th>Fecha</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Detalle</th></tr></thead><tbody id="reporteVentasTabla"></tbody></table></div>
+                        <p id="reporteVentasVacio" class="estado-vacio-grafico" hidden>Aún no hay ventas completadas para este periodo.</p>
+                    </section>
+                    <section class="reporte-panel">
+                        <div class="reporte-cabecera"><div><h3>Reporte de inventario</h3><p>Existencias, mínimos y movimientos registrados.</p></div><button class="btn btn-secondary" onclick="exportarReporteCSV('inventario')">Exportar CSV</button></div>
+                        <div class="reporte-filtros"><label class="form-grupo">Categoría<select id="reporteInventarioCategoria" class="form-input"><option value="">Todas las categorías</option></select></label><label class="form-grupo">Estado<select id="reporteInventarioEstado" class="form-input"><option value="">Todos los estados</option><option value="Agotado">Agotado</option><option value="Stock bajo">Stock bajo</option><option value="Disponible">Disponible</option><option value="Inactivo">Inactivo</option></select></label></div>
+                        <div id="reporteInventarioResumen" class="reporte-cliente-resumen"></div>
+                        <p id="reporteInventarioVacio" class="estado-vacio-grafico" hidden>No hay registros de inventario disponibles.</p>
+                        <div class="tabla-wrapper"><table class="tabla"><thead><tr><th>Ingrediente / bebida</th><th>Categoría</th><th>Existencia</th><th>Unidad</th><th>Stock mínimo</th><th>Estado</th></tr></thead><tbody id="reporteInventarioTabla"></tbody></table></div>
+                        <h4>Movimientos registrados</h4><p id="reporteMovimientosVacio" class="estado-vacio-grafico" hidden>Aún no hay movimientos registrados.</p><div class="tabla-wrapper"><table class="tabla"><thead><tr><th>Fecha</th><th>Artículo</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th></tr></thead><tbody id="reporteMovimientosTabla"></tbody></table></div>
+                    </section>
+                    <section class="reporte-panel">
+                        <div class="reporte-cabecera"><div><h3>Reporte de clientes</h3><p>Compras de clientes registrados dentro del período de análisis seleccionado arriba.</p></div><button class="btn btn-secondary" onclick="exportarReporteCSV('clientes')">Exportar CSV</button></div>
+                        <div class="reporte-filtros"><label class="form-grupo">Buscar cliente<input id="reporteClientesBusqueda" class="form-input" type="search" placeholder="Nombre o correo"></label></div>
+                        <div class="reporte-cliente-resumen"><strong>Clientes registrados: <span id="reporteClientesTotal">0</span></strong><span id="reporteClientesNuevos">No hay fechas de registro para calcular clientes nuevos.</span></div>
+                        <div class="tabla-wrapper"><table class="tabla"><thead><tr><th>Cliente</th><th>Correo</th><th>Compras</th><th>Total comprado en periodo</th></tr></thead><tbody id="reporteClientesTabla"></tbody></table></div>
+                        <p id="reporteClientesVacio" class="estado-vacio-grafico" hidden>Aún no hay clientes registrados.</p>
+                        <p id="reporteVentasSinCliente" class="reporte-nota"></p>
+                    </section>
+                </section>
+            </main>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalProducto" role="dialog" aria-modal="true" aria-labelledby="tituloModalProducto">
+    <div class="modal-contenido modal-contenido-amplio">
+        <div class="modal-header">
+            <h3 id="tituloModalProducto">Nuevo producto</h3>
+            <button class="modal-cerrar" onclick="cerrarModalProducto()" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-body">
+            <form id="formularioProducto" onsubmit="guardarProducto(event)">
+                <input id="productoIdEdicion" type="hidden">
+                <div class="formulario-entidad-grid">
+                    <label class="form-grupo">Nombre *<input id="productoNombre" class="form-input" required maxlength="100"></label>
+                    <label class="form-grupo">Categoría *<select id="productoCategoria" class="form-input" required onchange="actualizarFormularioProductoCategoria()"><option value="Pizzas">Pizza</option><option value="Bebidas">Bebida</option><option value="Adiciones">Adición</option></select></label>
+                    <label class="form-grupo"><span id="productoPrecioEtiqueta">Precio Personal *</span><input id="productoPrecio" class="form-input" type="number" min="0" step="1" required></label>
+                    <label class="form-grupo" id="productoPrecioMedianaGrupo">Precio Mediana *<input id="productoPrecioMediana" class="form-input" type="number" min="0" step="1"></label>
+                    <label class="form-grupo" id="productoPrecioFamiliarGrupo">Precio Familiar *<input id="productoPrecioFamiliar" class="form-input" type="number" min="0" step="1"></label>
+                    <label class="form-grupo" id="productoPresentacionGrupo" hidden>Presentación<input id="productoTamano" class="form-input" maxlength="40" placeholder="Ej. 600 ml, porción"></label>
+                    <label class="form-grupo formulario-entidad-ancho">Descripción<textarea id="productoDescripcion" class="form-input" rows="2" maxlength="240"></textarea></label>
+                    <label class="form-grupo">Estado<select id="productoDisponible" class="form-input"><option value="true">Disponible</option><option value="false">No disponible</option></select></label>
+                    <label class="form-grupo">Imagen<input id="productoImagenArchivo" class="form-input" type="file" accept="image/*" onchange="previsualizarImagenProducto(event)"></label>
+                    <div class="producto-imagen-preview-wrap"><img id="productoImagenPreview" alt="Vista previa del producto" hidden><span id="productoImagenPlaceholder">Sin imagen seleccionada</span></div>
+                </div>
+                <section id="productoRecetaWrap" class="composicion-editor">
+                    <div class="composicion-editor-cabecera"><div><h4>Ingredientes por unidad</h4><p>Selecciona ingredientes del inventario. Crear un producto no modifica existencias.</p></div><button type="button" class="btn btn-secondary btn-sm" onclick="agregarIngredienteAProducto()">+ Ingrediente</button></div>
+                    <label id="selectorTamanoRecetaWrap" class="form-grupo">Receta para tamaño<select id="productoRecetaTamano" class="form-input" onchange="cargarIngredientesProducto()"></select></label>
+                    <div id="productoIngredientesFilas"></div>
+                </section>
+                <div id="errorFormularioProducto" class="mensaje-formulario" role="alert" hidden></div>
+                <div class="modal-footer formulario-entidad-acciones">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalProducto()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalIngrediente" role="dialog" aria-modal="true" aria-labelledby="tituloModalIngrediente">
+    <div class="modal-contenido modal-contenido-amplio">
+        <div class="modal-header">
+            <h3 id="tituloModalIngrediente">Nuevo ingrediente</h3>
+            <button class="modal-cerrar" onclick="cerrarModalIngrediente()" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-body">
+            <form id="formularioIngrediente" onsubmit="guardarIngrediente(event)">
+                <input id="ingredienteIdEdicion" type="hidden">
+                <div class="formulario-entidad-grid">
+                    <label class="form-grupo">Nombre *<input id="ingredienteNombre" class="form-input" required maxlength="100"></label>
+                    <label class="form-grupo">Categoría *<select id="ingredienteCategoria" class="form-input" required><option>Harinas</option><option>Quesos</option><option>Carnes</option><option>Verduras</option><option>Salsas</option><option>Bebidas</option><option>Otros</option></select></label>
+                    <label class="form-grupo">Existencia actual *<input id="ingredienteCantidad" class="form-input" type="number" min="0" step="0.001" required></label>
+                    <label class="form-grupo">Unidad *<select id="ingredienteUnidad" class="form-input" required><option>kg</option><option>g</option><option>L</option><option>ml</option><option>unidad</option><option>unidades</option><option>botella</option><option>botellas</option><option>lata</option><option>latas</option></select></label>
+                    <label class="form-grupo">Stock mínimo *<input id="ingredienteMinimo" class="form-input" type="number" min="0" step="0.001" required></label>
+                    <label class="form-grupo">Costo por unidad<input id="ingredienteCosto" class="form-input" type="number" min="0" step="0.01" value="0"></label>
+                    <label class="form-grupo">Proveedor<select id="ingredienteProveedor" class="form-input"><option value="">Sin proveedor</option></select></label>
+                    <label class="form-grupo">Fecha de vencimiento<input id="ingredienteVencimiento" class="form-input" type="date"></label>
+                    <label class="form-grupo formulario-entidad-ancho">Observaciones<textarea id="ingredienteObservaciones" class="form-input" rows="2" maxlength="300"></textarea></label>
+                </div>
+                <div id="errorFormularioIngrediente" class="mensaje-formulario" role="alert" hidden></div>
+                <div class="modal-footer formulario-entidad-acciones">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalIngrediente()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar ingrediente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalConfirmacionEntidad" role="dialog" aria-modal="true" aria-labelledby="tituloConfirmacionEntidad">
+    <div class="modal-contenido modal-confirmacion">
+        <div class="modal-header"><h3 id="tituloConfirmacionEntidad">Confirmar acción</h3><button class="modal-cerrar" onclick="cancelarConfirmacionEntidad()" aria-label="Cerrar">✕</button></div>
+        <div class="modal-body"><p id="mensajeConfirmacionEntidad"></p><div class="modal-footer formulario-entidad-acciones"><button type="button" class="btn btn-secondary" onclick="cancelarConfirmacionEntidad()">Cancelar</button><button id="confirmarAccionEntidad" type="button" class="btn btn-primary">Sí, eliminar</button></div></div>
+    </div>
+</div>
+
+<div id="toastNotificacion" class="toast-notificacion" role="status" aria-live="polite"></div>
+
+<div class="modal-overlay" id="modalLoginCliente" role="dialog" aria-modal="true" aria-labelledby="tituloLoginCliente">
+    <div class="modal-contenido">
+        <div class="modal-header">
+            <h3 id="tituloLoginCliente">👤 Iniciar sesión</h3>
+            <button class="modal-cerrar" onclick="cerrarModal('modalLoginCliente')" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="login-error" id="loginClienteError" role="alert" aria-live="polite"></div>
+            <form onsubmit="iniciarSesionCliente(event)">
+                <div class="form-grupo">
+                    <label for="correoCliente">Correo electrónico</label>
+                    <input type="email" id="correoCliente" class="form-input" autocomplete="username" required placeholder="tu@correo.com">
+                </div>
+                <div class="form-grupo">
+                    <label for="contrasenaCliente">Contraseña</label>
+                    <div class="password-control"><input type="password" id="contrasenaCliente" class="form-input" autocomplete="current-password" required placeholder="Tu contraseña"><button type="button" class="password-toggle" onclick="alternarVisibilidadPassword('contrasenaCliente', this)" aria-label="Mostrar contraseña">Mostrar</button></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Iniciar sesión</button>
+            </form>
+            <p class="auth-enlace-registro">¿Aún no tienes cuenta? <button type="button" onclick="abrirRegistroCliente()">Registrarme</button></p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalRegistroCliente" role="dialog" aria-modal="true" aria-labelledby="tituloRegistroCliente">
+    <div class="modal-contenido">
+        <div class="modal-header">
+            <h3 id="tituloRegistroCliente">Crear cuenta de cliente</h3>
+            <button class="modal-cerrar" onclick="cerrarModal('modalRegistroCliente')" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="login-error" id="registroClienteError" role="alert" aria-live="polite"></div>
+            <form onsubmit="registrarCliente(event)">
+                <div class="form-grupo">
+                    <label for="nombreRegistroCliente">Nombre</label>
+                    <input type="text" id="nombreRegistroCliente" class="form-input" autocomplete="name" required>
+                </div>
+                <div class="form-grupo">
+                    <label for="correoRegistroCliente">Correo electrónico</label>
+                    <input type="email" id="correoRegistroCliente" class="form-input" autocomplete="email" required>
+                </div>
+                <div class="form-grupo">
+                    <label for="contrasenaRegistroCliente">Contraseña</label>
+                    <div class="password-control"><input type="password" id="contrasenaRegistroCliente" class="form-input" autocomplete="new-password" required minlength="8"><button type="button" class="password-toggle" onclick="alternarVisibilidadPassword('contrasenaRegistroCliente', this)" aria-label="Mostrar contraseña">Mostrar</button></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Crear cuenta</button>
+            </form>
+            <p class="auth-enlace-registro">¿Ya tienes cuenta? <button type="button" onclick="abrirLoginDesdeRegistro()">Iniciar sesión</button></p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalPedido">
+    <div class="modal-contenido" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3>📦 Nuevo pedido</h3>
+            <button class="modal-cerrar" onclick="cerrarModal('modalPedido')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="formulario-entidad-grid pedido-contexto-form">
+                <label class="form-grupo">Cliente
+                    <select id="pedidoCliente" class="form-input"></select>
+                </label>
+                <label class="form-grupo">Tipo de pedido
+                    <select id="pedidoTipo" class="form-input" onchange="actualizarCamposPedido()">
+                        <option value="Mesa">Mesa</option>
+                        <option value="Recoger">Para llevar</option>
+                    </select>
+                </label>
+                <label class="form-grupo" id="pedidoMesaGrupo" hidden>Mesa
+                    <input id="pedidoMesa" class="form-input" type="text" maxlength="20" placeholder="Número o referencia">
+                </label>
+                <label class="form-grupo pedido-observaciones">Observaciones
+                    <textarea id="pedidoObservaciones" class="form-input" rows="2" maxlength="300" placeholder="Indicaciones para el pedido"></textarea>
+                </label>
+            </div>
+            <div class="pedido-categorias">
+                <button class="categoria-btn activa" data-cat-pedido="Pizzas" onclick="filtrarPedidoCategoria('Pizzas', this)">🍕 Pizzas</button>
+                <button class="categoria-btn" data-cat-pedido="Bebidas" onclick="filtrarPedidoCategoria('Bebidas', this)">🥤 Bebidas</button>
+                <button class="categoria-btn" data-cat-pedido="Adiciones" onclick="filtrarPedidoCategoria('Adiciones', this)">🧀 Adiciones</button>
+                <button class="categoria-btn" data-cat-pedido="Combos" onclick="filtrarPedidoCategoria('Combos', this)">🎁 Combos</button>
+            </div>
+            <div id="productosModalPedido" class="productos-grid"></div>
+            <h4 class="pedido-modal-titulo-items">Productos del pedido</h4>
+            <div id="itemsModalPedido" class="pedido-modal-items"></div>
+        </div>
+        <div class="modal-footer">
+            <div>
+                <div style="font-size: 11px; color: var(--gray-500);">Total del pedido (IVA incluido)</div>
+                <div id="totalModalPedido" style="font-size: 22px; font-weight: 800; color: var(--brand-600);">$0</div>
+                <div id="detalleTotalModalPedido" style="font-size: 11px; color: var(--gray-500);"></div>
+            </div>
+            <div class="pedido-acciones">
+                <button class="btn btn-secondary" onclick="cerrarModal('modalPedido')">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmarPedido()">Confirmar pedido</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalPago" role="dialog" aria-modal="true" aria-labelledby="tituloModalPago">
+    <div class="modal-contenido">
+        <div class="modal-header"><h3 id="tituloModalPago">Registrar pago</h3><button class="modal-cerrar" type="button" onclick="cerrarModalPago()" aria-label="Cerrar">✕</button></div>
+        <form onsubmit="registrarPagoPedido(event)">
+            <div class="modal-body">
+                <p id="resumenPagoPedido" class="reporte-nota"></p>
+                <label class="form-grupo">Medio de pago
+                    <select id="medioPagoPedido" class="form-input" required>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="cerrarModalPago()">Cancelar</button>
+                <button class="btn btn-primary" type="submit">Confirmar pago</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalDetalleComercial" role="dialog" aria-modal="true" aria-labelledby="tituloDetalleComercial">
+    <div class="modal-contenido modal-contenido-amplio">
+        <div class="modal-header"><h3 id="tituloDetalleComercial">Detalle</h3><button class="modal-cerrar" onclick="cerrarModal('modalDetalleComercial')" aria-label="Cerrar detalle">✕</button></div>
+        <div class="modal-body" id="contenidoDetalleComercial"></div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="cerrarModal('modalDetalleComercial')">Cerrar</button></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalProveedor" role="dialog" aria-modal="true" aria-labelledby="tituloModalProveedor">
+    <div class="modal-contenido">
+        <div class="modal-header"><h3 id="tituloModalProveedor">Nuevo proveedor</h3><button class="modal-cerrar" type="button" onclick="cerrarModalProveedor()" aria-label="Cerrar">✕</button></div>
+        <div class="modal-body">
+            <form id="formularioProveedor" onsubmit="guardarProveedor(event)">
+                <input id="proveedorId" type="hidden">
+                <div class="formulario-entidad-grid">
+                    <label class="form-grupo">Nombre del proveedor *<input id="proveedorNombre" class="form-input" required maxlength="100"></label>
+                    <label class="form-grupo">Empresa<input id="proveedorEmpresa" class="form-input" maxlength="120"></label>
+                    <label class="form-grupo">Identificación<input id="proveedorIdentificacion" class="form-input" maxlength="40"></label>
+                    <label class="form-grupo">Teléfono<input id="proveedorTelefono" class="form-input" type="tel" maxlength="30"></label>
+                    <label class="form-grupo">Correo electrónico<input id="proveedorCorreo" class="form-input" type="email" maxlength="120"></label>
+                    <label class="form-grupo">Estado<select id="proveedorEstado" class="form-input"><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></label>
+                    <label class="form-grupo formulario-entidad-ancho">Dirección<input id="proveedorDireccion" class="form-input" maxlength="180"></label>
+                    <label class="form-grupo formulario-entidad-ancho">Productos o ingredientes que suministra<input id="proveedorProductos" class="form-input" maxlength="180"></label>
+                    <label class="form-grupo formulario-entidad-ancho">Observaciones<textarea id="proveedorObservaciones" class="form-input" rows="3" maxlength="300"></textarea></label>
+                </div>
+                <div id="errorFormularioProveedor" class="login-error" role="alert"></div>
+                <div class="modal-footer formulario-entidad-acciones"><button class="btn btn-secondary" type="button" onclick="cerrarModalProveedor()">Cancelar</button><button class="btn btn-primary" type="submit">Guardar proveedor</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalRestablecerPassword" role="dialog" aria-modal="true" aria-labelledby="tituloRestablecerPassword">
+    <div class="modal-contenido">
+        <div class="modal-header"><h3 id="tituloRestablecerPassword">Restablecer acceso</h3><button class="modal-cerrar" type="button" onclick="cerrarModal('modalRestablecerPassword')" aria-label="Cerrar">✕</button></div>
+        <form id="formularioRestablecerPassword" onsubmit="restablecerPasswordUsuario(event)">
+            <div class="modal-body">
+                <input id="usuarioResetId" type="hidden">
+                <p class="reporte-nota">Define una contraseña nueva para <strong id="usuarioResetNombre"></strong>. La contraseña actual nunca puede consultarse.</p>
+                <div id="errorRestablecerPassword" class="login-error" role="alert"></div>
+                <label class="form-grupo">Nueva contraseña
+                    <div class="password-control"><input id="usuarioResetPassword" class="form-input" type="password" minlength="8" maxlength="100" autocomplete="new-password" required><button type="button" class="password-toggle" onclick="alternarVisibilidadPassword('usuarioResetPassword', this)" aria-label="Mostrar contraseña">Mostrar</button></div>
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="cerrarModal('modalRestablecerPassword')">Cancelar</button>
+                <button class="btn btn-primary" type="submit">Guardar contraseña</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script defer src="paginacion.js"></script>
+<script defer src="script.js"></script>
+</body>
+</html>

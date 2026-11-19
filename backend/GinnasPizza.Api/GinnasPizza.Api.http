@@ -1,0 +1,53 @@
+@GinnasPizza.Api_HostAddress = http://localhost:5024
+
+### Estado de la API
+GET {{GinnasPizza.Api_HostAddress}}/
+
+### Catálogo público (solo productos disponibles)
+GET {{GinnasPizza.Api_HostAddress}}/api/productos
+Accept: application/json
+
+### Disponibilidad por producto y tamaño, calculada desde recetas e inventario
+GET {{GinnasPizza.Api_HostAddress}}/api/productos/disponibilidad
+Accept: application/json
+
+### Promociones vigentes (sin sesión: solo las generales)
+GET {{GinnasPizza.Api_HostAddress}}/api/promociones/vigentes
+Accept: application/json
+
+### Iniciar sesión como administrador (copia el "token" de la respuesta en @token)
+POST {{GinnasPizza.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{ "correo": "admin@ginnas.com", "password": "Admin2026*" }
+
+###
+@token = PEGA_AQUI_EL_TOKEN
+
+### Pedidos (requiere sesión de personal)
+GET {{GinnasPizza.Api_HostAddress}}/api/pedidos
+Authorization: Bearer {{token}}
+
+### Pedido web: el precio se calcula en el servidor según el tamaño
+POST {{GinnasPizza.Api_HostAddress}}/api/pedidos/web
+Content-Type: application/json
+
+{
+  "tipo": "Recoger",
+  "productos": [
+    { "productoId": 2, "tamano": "Mediana", "cantidad": 2 },
+    { "productoId": 6, "cantidad": 1 }
+  ]
+}
+
+### Inventario actual
+GET {{GinnasPizza.Api_HostAddress}}/api/ingredientes
+Authorization: Bearer {{token}}
+
+### Kardex de movimientos (incluye los descuentos automáticos por pedidos)
+GET {{GinnasPizza.Api_HostAddress}}/api/inventario/movimientos
+Authorization: Bearer {{token}}
+
+### Reporte del día (fechas en horario de Colombia)
+GET {{GinnasPizza.Api_HostAddress}}/api/reportes?desde=2026-11-01&hasta=2026-11-30
+Authorization: Bearer {{token}}
