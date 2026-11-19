@@ -37,6 +37,15 @@ function imagenHTML(src, alt, clase = 'img-ginnas') {
     return `<img class="${clase}" src="${escaparHTML(src)}" alt="${escaparHTML(alt)}" loading="lazy" onerror="this.onerror=null;this.src=IMG_FALLBACK">`;
 }
 
+/* Fotos por defecto de los combos (se usan solo si la promoción no tiene imagen propia). */
+const FOTO_UNSPLASH = id => `https://images.unsplash.com/photo-${id}?w=800&q=80`;
+const FOTOS_PROMOCIONES = {
+    'combo para compartir': FOTO_UNSPLASH('1571407970349-bc81e7e96d47'), // pizza para compartir + Coca-Cola
+    'combo personal': FOTO_UNSPLASH('1605478371310-a9f1e96b4ff4'),       // pizza pepperoni
+    'combo familiar': FOTO_UNSPLASH('1574071318508-1cdbab80d002')        // pizza napolitana
+};
+const fotoPromocion = promocion => promocion.imagen || FOTOS_PROMOCIONES[String(promocion.nombre || '').trim().toLowerCase()] || '';
+
 function escaparHTML(valor) {
     return String(valor ?? '').replace(/[&<>"']/g, caracter => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -771,7 +780,7 @@ function renderizarOfertasClientes(promociones, grid) {
         const disponibilidad = estadoDisponibilidadComponentes(promocion.componentes);
         return `
         <article class="oferta-card">
-            <div class="oferta-imagen">${promocion.imagen ? imagenHTML(promocion.imagen, promocion.nombre) : escaparHTML(promocion.emoji || '🎁')}</div>
+            <div class="oferta-imagen">${fotoPromocion(promocion) ? imagenHTML(fotoPromocion(promocion), promocion.nombre) : escaparHTML(promocion.emoji || '🎁')}</div>
             <div class="oferta-detalle">
                 <div class="oferta-nombre-linea"><h4>${escaparHTML(promocion.nombre)}</h4><span class="oferta-descuento">−${formatearCOP(promocion.descuento)}</span></div>
                 <p>${escaparHTML(promocion.descripcion)}</p>
@@ -2700,7 +2709,7 @@ function renderizarProductosModalPedido() {
             const disponibilidad = estadoDisponibilidadComponentes(p.componentes);
             return `
             <div class="producto-card">
-                <div class="producto-imagen">${p.imagen ? imagenHTML(p.imagen, p.nombre) : escaparHTML(p.emoji || '🎁')}</div>
+                <div class="producto-imagen">${fotoPromocion(p) ? imagenHTML(fotoPromocion(p), p.nombre) : escaparHTML(p.emoji || '🎁')}</div>
                 <div class="producto-nombre">${escaparHTML(p.nombre)}</div>
                 <div class="producto-descripcion">${escaparHTML(p.descripcion || '')}</div>
                 ${disponibilidad.disponible ? '' : `<div class="producto-disponibilidad" role="status">${escaparHTML(disponibilidad.motivo)}</div>`}

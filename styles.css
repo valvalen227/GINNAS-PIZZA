@@ -2189,7 +2189,7 @@ body { overflow-x: hidden; }
     background: var(--brand-50);
 }
 .oferta-card { grid-template-columns: minmax(110px, 38%) minmax(0, 1fr); }
-.oferta-imagen { min-height: 0; aspect-ratio: 16 / 10; align-self: start; }
+.oferta-imagen { min-height: 0; aspect-ratio: 16 / 10; align-self: start; border-radius: var(--radius-md); }
 .tabla-imagen-producto { width: 48px; height: 30px; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }
 
 /* Cabecera pública: botones táctiles y sin desbordes */
